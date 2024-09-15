@@ -1,0 +1,41 @@
+<p>Search for your favorite airport</p>
+<!-- <div>
+    <h2>Search Airport by ICAO Code</h2>
+    <input [(ngModel)]="icaoCode" placeholder="Enter ICAO code" />
+    <button (click)="searchAirport()">Search</button>
+    
+    <div *ngIf="errorMessage" style="color: red;">
+      {{ errorMessage }}
+    </div>
+  
+    <div *ngIf="airportData">
+      <h3>{{ airportData.name }} ({{ airportData.icao }})</h3>
+      <p>Location: {{ airportData.city }}, {{ airportData.country }}</p>
+      <p>Coordinates: {{ airportData.latitude }}, {{ airportData.longitude }}</p>
+    </div>
+  </div> -->
+
+  <div class="input-group search-bar">
+    <input type="search" class="form-control rounded" placeholder="Enter the ICAO Code of the airport" aria-label="Search" aria-describedby="search-addon" [(ngModel)]="icaoCode"/>
+    <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init (click)="searchAirport()">
+        <span class="material-symbols-outlined"> search </span>
+    </button>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h4 class="card-title">Name: {{airportData.name}}</h4>
+      <p class="card-text">ICAO: {{airportData.ident}}, IATA: {{airportData.iata_code}}</p>
+      <p class="card-text">Country: {{airportData.country.name}}</p>
+      <p class="card-text">Coordinates: ({{airportData.latitude_deg}}, {{airportData.longitude_deg}})</p>
+      <p class="card-text">Number of runways: {{airportData.runways.length}}</p>
+    
+    <div class="card-body">
+      <a [href]="airportData.home_link" class="card-link">Website</a>
+      <a [href]="airportData.wikipedia_link" class="card-link">Wikipedia</a>
+    </div>
+  </div>
+
+
+  

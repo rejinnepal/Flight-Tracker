@@ -1,0 +1,6 @@
+.search-bar {
+    display: flex;
+    justify-content: center;  /* Center horizontally */
+    margin: 20px auto;  /* Optional: Adds some margin around the search bar */
+    max-width: 500px;  /* Optional: Limits the width of the search bar */
+}

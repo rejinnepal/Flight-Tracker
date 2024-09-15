@@ -1,0 +1,17 @@
+<p>Track your favorite flight here</p>
+<div class="input-group search-bar">
+    <input type="search" class="form-control rounded" placeholder="Enter the flight number to track the plane" aria-label="Search" aria-describedby="search-addon" [(ngModel)]="flightNumber"/>
+    <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init (click)="updatePosition(10,10)">
+        <span class="material-symbols-outlined"> search </span>
+    </button>
+</div>
+<google-map
+  height="100%"
+  width="100%"
+  [center]="center"
+  [zoom]="6">
+  <map-marker
+    [position]="markerPosition"
+    [options]="markerOptions">
+  </map-marker>
+</google-map>
