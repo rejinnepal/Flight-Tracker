@@ -1,19 +1,9 @@
-<p>Search for your favorite airport</p>
-<!-- <div>
-    <h2>Search Airport by ICAO Code</h2>
-    <input [(ngModel)]="icaoCode" placeholder="Enter ICAO code" />
-    <button (click)="searchAirport()">Search</button>
-    
+<!-- <p>Search for your favorite airport</p>
+<div>
     <div *ngIf="errorMessage" style="color: red;">
-      {{ errorMessage }}
+      Error while searching: {{errorMessage }}
     </div>
-  
-    <div *ngIf="airportData">
-      <h3>{{ airportData.name }} ({{ airportData.icao }})</h3>
-      <p>Location: {{ airportData.city }}, {{ airportData.country }}</p>
-      <p>Coordinates: {{ airportData.latitude }}, {{ airportData.longitude }}</p>
-    </div>
-  </div> -->
+  </div>
 
   <div class="input-group search-bar">
     <input type="search" class="form-control rounded" placeholder="Enter the ICAO Code of the airport" aria-label="Search" aria-describedby="search-addon" [(ngModel)]="icaoCode"/>
@@ -22,7 +12,28 @@
     </button>
   </div>
 
-  <div class="card" style="width: 18rem;">
+  <div *ngIf="airportData">
+    <h1> You searched for {{icaoCode}} ICAO code.</h1>
+  </div>
+
+  <div class="card" style="width: 18rem;" *ngIf="showFavoriteAirport"></div>
+  Your featured airport
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h4 class="card-title">Name: {{favoriteAirport.name}}</h4>
+      <p class="card-text">ICAO: {{favoriteAirport.ident}}, IATA: {{favoriteAirport.iata_code}}</p>
+      <p class="card-text">Country: {{favoriteAirport.country.name}}</p>
+      <p class="card-text">Coordinates: ({{favoriteAirport.latitude_deg}}, {{favoriteAirport.longitude_deg}})</p>
+      <p class="card-text">Number of runways: {{favoriteAirport.runways.length}}</p>
+    
+    <div class="card-body">
+      <a [href]="favoriteAirport.home_link" class="card-link">Website</a>
+      <a [href]="favoriteAirport.wikipedia_link" class="card-link">Wikipedia</a>
+    </div>
+  </div>
+
+
+  <div class="card" style="width: 18rem;" *ngIf="airportData">
     <img src="..." class="card-img-top" alt="...">
     <div class="card-body">
       <h4 class="card-title">Name: {{airportData.name}}</h4>
@@ -37,5 +48,91 @@
     </div>
   </div>
 
+  <br>
+  <br>
 
+  <google-map
+    height="100%"
+    width="100%"
+    [center]="center"
+    [zoom]="6">
+  <map-marker
+    [position]="markerPosition"
+    [options]="markerOptions">
+  </map-marker>
+</google-map>
   
+
+
+   -->
+
+
+   <p>Search for your favorite airport</p>
+   <div *ngIf="errorMessage" style="color: red;">
+     Error while searching: {{ errorMessage }}
+   </div>
+   
+   <div class="input-group search-bar">
+     <input type="search" class="form-control rounded" placeholder="Enter the ICAO Code of the airport" aria-label="Search" aria-describedby="search-addon" [(ngModel)]="icaoCode"/>
+     <button type="button" class="btn btn-outline-primary" (click)="searchAirport()">
+       <span class="material-symbols-outlined"> search </span>
+     </button>
+   </div>
+   
+   <!-- Show map and airport details for the favorite airport -->
+   <div *ngIf="showFavoriteAirport">
+     <h2>Your Featured Airport: {{ favoriteAirport.name }}</h2>
+     <p>ICAO: {{ favoriteAirport.ident }}, Country: {{ favoriteAirport.country.name }}</p>
+     <p>Coordinates: ({{ favoriteAirport.latitude_deg }}, {{ favoriteAirport.longitude_deg }})</p>
+     
+   
+     <google-map
+       height="300px"
+       width="100%"
+       [center]="center"
+       [zoom]="10">
+       <map-marker
+         [position]="markerPosition"
+         [options]="markerOptions">
+       </map-marker>
+     </google-map>
+   </div>
+   
+   <!-- Show map and airport details for searched airport -->
+   <div *ngIf="airportData && !showFavoriteAirport">
+     <h1>You searched for {{ icaoCode }} ICAO code.</h1>
+   
+     <!-- <div class="card" style="width: 18rem;">
+       <div class="card-body">
+         <h4 class="card-title">Name: {{ airportData.name }}</h4>
+         <p class="card-text">ICAO: {{ airportData.ident }}, Country: {{ airportData.country.name }}</p>
+         <p class="card-text">Coordinates: ({{ airportData.latitude_deg }}, {{ airportData.longitude_deg }})</p>
+       </div>
+     </div> -->
+     <div class="card" style="width: 18rem;" *ngIf="airportData">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h4 class="card-title">Name: {{airportData.name}}</h4>
+        <p class="card-text">ICAO: {{airportData.ident}}, IATA: {{airportData.iata_code}}</p>
+        <p class="card-text">Country: {{airportData.country.name}}</p>
+        <p class="card-text">Coordinates: ({{airportData.latitude_deg}}, {{airportData.longitude_deg}})</p>
+        <p class="card-text">Number of runways: {{airportData.runways.length}}</p>
+      
+      <div class="card-body">
+        <a [href]="airportData.home_link" class="card-link">Website</a>
+        <a [href]="airportData.wikipedia_link" class="card-link">Wikipedia</a>
+      </div>
+    </div>
+   
+     <google-map
+       height="300px"
+       width="100%"
+       [center]="center"
+       [zoom]="10">
+       <map-marker
+         [position]="markerPosition"
+         [options]="markerOptions">
+       </map-marker>
+     </google-map>
+   </div>
+   
