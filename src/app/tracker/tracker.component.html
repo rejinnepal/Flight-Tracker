@@ -1,17 +1,33 @@
 <p>Track your favorite flight here</p>
-<div class="input-group search-bar">
+
+<button type="button" class="btn btn-primary search-bar" (click)="loadFlights()">Search live flights</button>
+
+<div class="input-group search-bar" *ngIf="displayFilterSearchBar">
     <input type="search" class="form-control rounded" placeholder="Enter the flight number to track the plane" aria-label="Search" aria-describedby="search-addon" [(ngModel)]="flightNumber"/>
     <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init (click)="updatePosition(10,10)">
         <span class="material-symbols-outlined"> search </span>
     </button>
 </div>
-<google-map
-  height="100%"
-  width="100%"
-  [center]="center"
-  [zoom]="6">
-  <map-marker
-    [position]="markerPosition"
-    [options]="markerOptions">
-  </map-marker>
+
+<div class="map">
+  <google-map height="100%" width="100%" [center]="center" [zoom]="6">
+    <map-marker [position]="markerPosition" [options]="markerOptions"></map-marker>
+  </google-map>
+</div>
+
+<google-map height="100%" width="100%" [center]="center" [zoom]="2">
+  <map-marker [position]="markerPosition" [options]="markerOptions"></map-marker>
 </google-map>
+
+<div class="alert alert-danger" role="alert" *ngIf="errorMessage">
+  Error: {{ errorMessage }} Refresh the page again.
+</div>
+
+<div *ngIf="flights.length > 0">
+  <ul>
+    <li *ngFor="let flight of flights">
+      {{ flight.airline.name }} flight {{ flight.flight.iata }} from {{ flight.departure.airport }} ({{ flight.departure.iata }}) 
+      to {{ flight.arrival.airport }} ({{ flight.arrival.iata }}) is in the air.
+    </li>
+  </ul>
+</div>

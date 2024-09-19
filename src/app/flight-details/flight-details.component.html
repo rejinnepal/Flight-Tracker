@@ -1,0 +1,25 @@
+<button type="button" class="btn btn-primary search-bar" (click)="loadFlights()">{{!displayFilterSearchBar ? "Search all live flights   " : "Refresh the search   "}}
+    <span class="material-symbols-outlined"> search </span>
+</button>
+
+<div class="input-group search-bar" *ngIf="displayFilterSearchBar">
+    <input type="search" class="form-control rounded" placeholder="Enter the flight number to view flight details" aria-label="Search" aria-describedby="search-addon" [(ngModel)]="flightNumber" (ngModelChange)="filterFlights()"/>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 cards-container" *ngIf="flights.length > 0">
+    <div *ngFor="let flight of filteredFlights" class="col">
+      <div class="card" [ngClass]="{
+        'card-active': flight.flight_status === 'active',
+        'card-scheduled': flight.flight_status === 'scheduled',
+        'card-cancelled': flight.flight_status === 'cancelled'}">
+        <div class="card-body">
+          <h2 class="card-title">{{flight.flight.iata || "N/A"}}</h2>
+          <h4 class="card-text">{{flight.departure.iata}} - {{flight.arrival.iata}}</h4>
+          <p class="card-text">Airline: {{flight.airline.name || "N/A"}}</p>
+          <p class="card-text">Scheduled Departure: {{flight.departure.scheduled.slice(11,16)}} ({{flight?.departure?.timezone?.split("/").pop() || "N/A"}})</p>
+          <p class="card-text">Scheduled Arrival: {{flight.arrival.scheduled.slice(11,16)}} ({{flight?.arrival?.timezone?.split("/").pop() || "N/A"}})</p>
+          <p class="card-text">Flight Status: {{ flight.flight_status ? (flight.flight_status.charAt(0).toUpperCase() + flight.flight_status.slice(1).toLowerCase()) : 'N/A' }}</p>
+        </div>
+      </div>
+    </div>
+</div>

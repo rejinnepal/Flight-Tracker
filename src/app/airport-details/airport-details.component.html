@@ -85,17 +85,18 @@
      <p>ICAO: {{ favoriteAirport.ident }}, Country: {{ favoriteAirport.country.name }}</p>
      <p>Coordinates: ({{ favoriteAirport.latitude_deg }}, {{ favoriteAirport.longitude_deg }})</p>
      
-   
-     <google-map
-       height="300px"
-       width="100%"
-       [center]="center"
-       [zoom]="10">
-       <map-marker
-         [position]="markerPosition"
-         [options]="markerOptions">
-       </map-marker>
-     </google-map>
+      <div class="map-container">
+        <google-map
+          height="300px"
+          width="100%"
+          [center]="center"
+          [zoom]="15">
+          <map-marker
+            [position]="markerPosition"
+            [options]="markerOptions">
+          </map-marker>
+        </google-map>
+      </div>
    </div>
    
    <!-- Show map and airport details for searched airport -->

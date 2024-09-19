@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
+import { FlightService } from '../../backend/flight.service';
 
 
 @Component({
@@ -15,12 +16,14 @@ export class TrackerComponent implements OnInit {
   @Input() latitude: number = 40.7128;
   @Input() longitude: number = -74.0060;
   flightNumber: string = "";
-
+  flights:any[] = [];
+  errorMessage:string = "";
+  displayFilterSearchBar = false;
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   markerOptions: google.maps.MarkerOptions = { draggable: false };
   markerPosition: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
 
-  constructor() { }
+  constructor(private flightService: FlightService) {}
 
   ngOnInit(): void {
     this.center = {
@@ -48,5 +51,19 @@ export class TrackerComponent implements OnInit {
     this.markerPosition = { lat, lng };
     this.center = { lat, lng };
     console.log(this.flightNumber);
+  }
+
+  loadFlights():void {
+    this.flightService.getFlights().subscribe(
+      (data: any[]) => {
+        this.flights = data;
+        console.log('flight data: ', data);
+      },
+      error => {
+        this.errorMessage = 'Failed to load flight data.';
+        console.error('Error loading flight data:', error);
+      }
+    );
+    this.displayFilterSearchBar = true;
   }
 }

@@ -1,0 +1,31 @@
+.search-bar {
+    display: flex;
+    justify-content: center;  /* Center horizontally */
+    margin: 20px auto;  /* Optional: Adds some margin around the search bar */
+    max-width: 500px;  /* Optional: Limits the width of the search bar */
+}
+
+.card-container{
+    padding: 0 15px;
+}
+
+.card {
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%; /* Adjust this value to control how much the cards shrink */
+}
+
+.card-active {
+    background-color: rgb(28, 245, 28);
+    color: black;
+}
+
+.card-scheduled {
+    background-color: rgb(242, 242, 111);
+    color: black;
+}
+
+.card-cancelled {
+    background-color: rgb(237, 93, 93);
+    color: white;
+}  

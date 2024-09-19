@@ -4,3 +4,14 @@
     margin: 20px auto;  /* Optional: Adds some margin around the search bar */
     max-width: 500px;  /* Optional: Limits the width of the search bar */
 }
+
+.map-container {
+    max-width: 90%; /* Set the maximum width of the map */
+    margin: 0 auto; /* Center the map horizontally */
+    padding: 20px; /* Add some space around the map */
+}
+
+google-map {
+    width: 100%; /* Keep the map responsive within the container */
+    height: 300px; /* Adjust the height as needed */
+}
