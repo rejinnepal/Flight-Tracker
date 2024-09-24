@@ -21,3 +21,11 @@ google-map {
     margin: 20px auto;  /* Optional: Adds some margin around the search bar */
     max-width: 500px;  /* Optional: Limits the width of the search bar */
 }
+
+.flight-marker {
+  background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png');
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}

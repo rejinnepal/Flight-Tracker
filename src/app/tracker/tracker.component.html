@@ -9,16 +9,6 @@
     </button>
 </div>
 
-<div class="map">
-  <google-map height="100%" width="100%" [center]="center" [zoom]="6">
-    <map-marker [position]="markerPosition" [options]="markerOptions"></map-marker>
-  </google-map>
-</div>
-
-<google-map height="100%" width="100%" [center]="center" [zoom]="2">
-  <map-marker [position]="markerPosition" [options]="markerOptions"></map-marker>
-</google-map>
-
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage">
   Error: {{ errorMessage }} Refresh the page again.
 </div>
@@ -31,3 +21,5 @@
     </li>
   </ul>
 </div>
+
+<div id="map" style="width: 100%; height: 100vh;"></div>

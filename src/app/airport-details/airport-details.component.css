@@ -13,5 +13,23 @@
 
 google-map {
     width: 100%; /* Keep the map responsive within the container */
-    height: 300px; /* Adjust the height as needed */
+    height: 50%; /* Adjust the height as needed */
+}
+
+.favorite-airport-text{
+    width: 25rem;
+    margin:auto;
+    margin-top: 10%;
+    text-align: center;
+}
+
+.favorite-airport{
+    width: 25rem;
+    margin:auto;
+    margin-top: 2%;
+}
+
+.searched-airport{
+    margin:auto;
+    width: 25rem;
 }
