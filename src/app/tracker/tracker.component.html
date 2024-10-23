@@ -1,6 +1,8 @@
-<p>Track your favorite flight here</p>
+<!-- <p>Track your favorite flight here</p>
 
 <button type="button" class="btn btn-primary search-bar" (click)="loadFlights()">Search live flights</button>
+<button type="button" class="btn btn-primary search-bar" (click)="getLiveFlights()">Search live flights</button>
+
 
 <div class="input-group search-bar" *ngIf="displayFilterSearchBar">
     <input type="search" class="form-control rounded" placeholder="Enter the flight number to track the plane" aria-label="Search" aria-describedby="search-addon" [(ngModel)]="flightNumber"/>
@@ -13,6 +15,26 @@
   Error: {{ errorMessage }} Refresh the page again.
 </div>
 
+<google-map
+  *ngIf="displayMapWithPlanes"
+  height="100%"
+  width="100%"
+  [center]="center"
+  [zoom]="zoom">
+  <map-marker
+    *ngFor="let marker of markers"
+    [position]="marker.position"
+    [options]="markerOptions"
+    [title]="marker.title"
+    [icon]="marker.icon"
+    (mouseover)="openInfoWindow($event, marker.flightNumber)">
+    >
+  </map-marker>
+  <map-info-window>
+    Flight Number: {{ selectedFlightNumber }}
+  </map-info-window>
+</google-map>
+
 <div *ngIf="flights.length > 0">
   <ul>
     <li *ngFor="let flight of flights">
@@ -22,4 +44,34 @@
   </ul>
 </div>
 
-<div id="map" style="width: 100%; height: 100vh;"></div>
+<div id="map" style="width: 100%; height: 100vh;"></div> -->
+
+<google-map
+  *ngIf="displayMapWithPlanes"
+  height="100%"
+  width="100%"
+  [center]="center"
+  [zoom]="zoom">
+
+  <map-marker
+    *ngFor="let marker of markers"
+    [position]="marker.position"
+    [icon]="marker.icon"
+    [title]="marker.title"
+    (mapClick)="onMarkerClick(marker)">
+    (mouseover)="openInfoWindow(marker, marker.flightData)"
+    (mouseout)="closeInfoWindow()">
+  </map-marker>
+
+  <map-info-window>
+    <div *ngIf="selectedFlightInfo">
+      <strong>Flight Number:</strong> {{ selectedFlightInfo.flightNumber }}<br>
+      <strong>Departure:</strong> {{ selectedFlightInfo.departureAirport }}<br>
+      <strong>Arrival:</strong> {{ selectedFlightInfo.arrivalAirport }}<br>
+    </div>
+  </map-info-window>
+</google-map>
+
+<div class="alert alert-danger" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>

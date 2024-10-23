@@ -21,7 +21,8 @@ export class FlightService {
         return this.http.get(this.API_URL, { params }).pipe(
           map((response: any) => {
             console.log('API response:', response);
-            return response.data
+            // return response.data
+            return response
           }),
           catchError(error => {
             console.error('Error fetching flight data:', error);
