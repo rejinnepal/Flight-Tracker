@@ -20,7 +20,7 @@ export class FlightsService {
     // We can add parameters like `limit`, `airlineIata`, or `status` to the query
     const params = {
       key: this.apiKey,
-      limit: '1000'
+      limit: '5000'
     };
 
     return this.http.get(this.apiUrl, { headers, params }).pipe(

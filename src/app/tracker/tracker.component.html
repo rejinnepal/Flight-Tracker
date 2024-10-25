@@ -1,49 +1,54 @@
 <div class="map-container">
-  <div class="alert alert-danger top-alert" *ngIf="errorMessage">
-    {{ errorMessage }}
+  <div *ngIf="!isLoadingFinished" class="loading-bar-container">
+    <div class="loading-bar"></div>
+    <p>Loading map and flight data...</p>
   </div>
-  <div class="input-group search-bar">
-    <input
-      type="search"
-      class="form-control rounded"
-      placeholder="Enter the flight number to track the plane"
-      aria-label="Search"
-      aria-describedby="search-addon"
-      [(ngModel)]="searchedFlightNumber"
-    />
-    <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init (click)="searchFlightNumber()">
-      <span class="material-symbols-outlined">search</span>
-    </button>
-  </div>
-
-  <google-map
-  *ngIf="displayMapWithPlanes"
-  height="100%"
-  width="100%"
-  [center]="center"
-  [zoom]="zoom"
->
-  <map-marker
-    *ngFor="let marker of markers"
-    [position]="marker.position"
-    [icon]="marker.icon"
-    [title]="marker.title"
-    (mapClick)="onMarkerClick(marker, markerRef)"
-    #markerRef="mapMarker"
-  >
-  </map-marker>
-
-  <map-info-window #infoWindow>
-    <div *ngIf="selectedFlightInfo">
-      <strong>Flight Number:</strong> {{ selectedFlightInfo.flightNumber }}<br />
-      <strong>Airline:</strong> {{ selectedFlightInfo.airline }}<br />
-      <strong>Departure Airport:</strong> {{ selectedFlightInfo.departureAirport }}<br />
-      <strong>Arrival Airport:</strong> {{ selectedFlightInfo.arrivalAirport }}<br />
-      <strong>Speed:</strong> {{ selectedFlightInfo.speed }} km/h<br />
-      <strong>Altitude:</strong> {{ selectedFlightInfo.altitude }} m<br />
-      <strong>Last Update:</strong> {{ selectedFlightInfo.lastUpdate }}<br />
+  <div *ngIf="isLoadingFinished">
+    <div class="alert alert-danger top-alert" *ngIf="errorMessage">
+      {{ errorMessage }}
     </div>
-  </map-info-window>
-</google-map>
-
+    <div class="input-group search-bar">
+      <input
+        type="search"
+        class="form-control rounded"
+        placeholder="Enter the flight number to track the plane"
+        aria-label="Search"
+        aria-describedby="search-addon"
+        [(ngModel)]="searchedFlightNumber"
+      />
+      <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init (click)="searchFlightNumber()">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+    </div>
+  </div>
+  
+    <google-map
+    *ngIf="displayMapWithPlanes"
+    height="100%"
+    width="100%"
+    [center]="center"
+    [zoom]="zoom"
+  >
+    <map-marker
+      *ngFor="let marker of markers"
+      [position]="marker.position"
+      [icon]="marker.icon"
+      [title]="marker.title"
+      (mapClick)="onMarkerClick(marker, markerRef)"
+      #markerRef="mapMarker"
+    >
+    </map-marker>
+  
+    <map-info-window #infoWindow>
+      <div *ngIf="selectedFlightInfo">
+        <strong>Flight Number:</strong> {{ selectedFlightInfo.flightNumber }}<br />
+        <strong>Airline:</strong> {{ selectedFlightInfo.airline }}<br />
+        <strong>Departure Airport:</strong> {{ selectedFlightInfo.departureAirport }}<br />
+        <strong>Arrival Airport:</strong> {{ selectedFlightInfo.arrivalAirport }}<br />
+        <strong>Speed:</strong> {{ selectedFlightInfo.speed }} km/h<br />
+        <strong>Altitude:</strong> {{ selectedFlightInfo.altitude }} m<br />
+        <strong>Last Update:</strong> {{ selectedFlightInfo.lastUpdate }}<br />
+      </div>
+    </map-info-window>
+  </google-map>
 </div>

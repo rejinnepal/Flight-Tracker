@@ -23,6 +23,7 @@ export class TrackerComponent implements OnInit {
   polylines: any[] = [];
   selectedFlightInfo: any = null;
   searchedFlightNumber: string = "";
+  isLoadingFinished: boolean = false;
 
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   zoom = 3;
@@ -37,52 +38,21 @@ export class TrackerComponent implements OnInit {
 
   @ViewChild(MapInfoWindow, { static: false }) infoWindow!: MapInfoWindow;
 
-  constructor(private flightsService: FlightsService, @Inject(PLATFORM_ID) private platformId: object // Inject the platform to check if it's browser
+  constructor(private flightsService: FlightsService, @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngOnInit(): void {
     this.loadLiveFlights();
   }
 
-  // loadLiveFlights(): void {
-  //   this.flightsService.getFlights().subscribe(
-  //     (data: any[]) => {
-  //       this.flights = data;
-  //       this.displayMapWithPlanes = true;
-  
-  //       if (data.length > 0) {
-  //         this.center = { lat: data[0].geography.latitude, lng: data[0].geography.longitude };
-  //         this.markers = data.map(flight => ({
-  //           position: { lat: flight.geography.latitude, lng: flight.geography.longitude },
-  //           title: flight.flight.iataNumber || flight.flight.number,
-  //           icon: {
-  //             url: this.planeIcon,
-  //             scaledSize: new google.maps.Size(15, 15)
-  //           },
-  //           flightData: flight
-  //         }));
-  //       }
-  //     },
-  //     error => {
-  //       this.errorMessage = 'Failed to load live flight data.';
-  //       console.error('Error loading flight data:', error);
-  //     }
-  //   );
-  // }
-
   loadLiveFlights(): void {
+    this.isLoadingFinished = false;
     this.flightsService.getFlights().subscribe(
       (data: any[]) => {
         
         console.log('Full flight data from API:', data);
-
-        // this.flights = data.filter(flight => 
-        //   !(flight.flight.iataNumber && flight.flight.iataNumber.includes('XXD')) &&
-        //   !(flight.flight.number && flight.flight.number.includes('XXD'))
-        // );
         this.flights = data;
 
-  
         this.displayMapWithPlanes = true;
   
         if (this.flights.length > 0) {
@@ -98,10 +68,12 @@ export class TrackerComponent implements OnInit {
             flightData: flight
           }));
         }
+        this.isLoadingFinished = true;
       },
       error => {
         this.errorMessage = 'Failed to load live flight data.';
         console.error('Error loading flight data:', error);
+        this.isLoadingFinished = true;
       }
     );
   }
