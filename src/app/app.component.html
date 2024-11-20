@@ -1,12 +1,10 @@
 <nav class="navbar navbar-expand-lg fixed-top" *ngIf="authService.isAuthenticated()">
   <div class="container-fluid">
-    <!-- Brand -->
     <a class="navbar-brand d-flex align-items-center" routerLink="/">
       <span class="material-symbols-outlined brand-icon me-2">flight_takeoff</span>
       <span class="brand-text">SkyTracker</span>
     </a>
     
-    <!-- Mobile Toggle Button -->
     <button 
       class="navbar-toggler border-0 shadow-none" 
       type="button" 
@@ -18,7 +16,6 @@
       <span class="material-symbols-outlined">menu</span>
     </button>
 
-    <!-- Navigation Items -->
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item">
@@ -35,7 +32,7 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="/airports" routerLinkActive="active">
-            <span class="material-symbols-outlined nav-icon">airport</span>
+            <span class="material-symbols-outlined nav-icon">local_airport</span>
             <span class="nav-text">Airports</span>
           </a>
         </li>

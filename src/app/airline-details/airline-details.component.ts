@@ -16,7 +16,7 @@ export class AirlineDetailsComponent implements OnInit {
   searchCode: string = '';
   errorMessage: string = '';
   isLoading: boolean = false;
-  sortField: string = 'name'; // Default sort field
+  sortField: string = 'name';
   currentPage: number = 1;
   itemsPerPage: number = 12;
   Math = Math;
@@ -53,7 +53,7 @@ export class AirlineDetailsComponent implements OnInit {
 
   searchAirlines(): void {
     if (!this.searchCode) {
-      this.loadAirlines(); // Refresh data when search is cleared
+      this.loadAirlines();
       return;
     }
     
