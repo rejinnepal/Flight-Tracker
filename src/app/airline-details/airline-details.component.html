@@ -1,1 +1,137 @@
-<p>Search for your favorite airline!</p>
+<div class="container">
+  <div class="header-section">
+    <h1>Airlines Directory</h1>
+    <p class="subtitle">Search and explore airlines worldwide</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <div class="search-section" [class.loading]="isLoading">
+    <div class="input-group">
+      <span class="input-group-text bg-white">
+        <span class="material-symbols-outlined">search</span>
+      </span>
+      <input 
+        type="search" 
+        class="form-control search-input" 
+        placeholder="Search by airline name, IATA, or ICAO code" 
+        [(ngModel)]="searchCode"
+        (ngModelChange)="searchAirlines()"
+        [disabled]="isLoading"
+      />
+      <button 
+        class="btn btn-outline-secondary refresh-btn" 
+        (click)="loadAirlines()"
+        [disabled]="isLoading"
+        title="Refresh airlines data">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+    </div>
+    
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner-border text-primary spinner-sm" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-info" *ngIf="airlines.length > 0">
+    Showing {{ filteredAirlines.length }} airlines
+  </div>
+
+  <div class="airlines-list" *ngIf="airlines.length > 0">
+    <div class="card" *ngFor="let airline of paginateAirlines()">
+      <div class="card-body">
+        <h5 class="card-title">{{ airline.nameAirline || 'Unknown Airline' }}</h5>
+        <div class="card-text">
+          <div class="codes-section">
+            <span class="badge bg-primary me-2">ICAO: {{ airline.codeIcaoAirline || 'N/A' }}</span>
+            <span class="badge bg-secondary">IATA: {{ airline.codeIataAirline || 'N/A' }}</span>
+          </div>
+          <div class="main-info">
+            <p><strong>Country:</strong> {{ airline.nameCountry || 'N/A' }}</p>
+            <p><strong>Hub:</strong> {{ airline.codeHub || 'N/A' }}</p>
+            <p>
+              <strong>Status:</strong> 
+              <span class="badge" [ngClass]="{
+                'bg-success': airline.statusAirline === 'active',
+                'bg-warning': airline.statusAirline === 'scheduled',
+                'bg-danger': airline.statusAirline === 'inactive'
+              }">
+                {{ airline.statusAirline || 'N/A' }}
+              </span>
+            </p>
+            <p><strong>Type:</strong> {{ airline.type || 'N/A' }}</p>
+          </div>
+          <div class="additional-info">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="material-symbols-outlined">flight</span>
+                <div>
+                  <small>Fleet Size</small>
+                  <p>{{ airline.sizeAirline || 'N/A' }} aircraft</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <span class="material-symbols-outlined">schedule</span>
+                <div>
+                  <small>Fleet Age</small>
+                  <p>{{ airline.ageFleet || 'N/A' }} years</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <span class="material-symbols-outlined">event</span>
+                <div>
+                  <small>Founded</small>
+                  <p>{{ airline.founding || 'N/A' }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <span class="material-symbols-outlined">radio</span>
+                <div>
+                  <small>Callsign</small>
+                  <p>{{ airline.callsign || 'N/A' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="filteredAirlines.length > itemsPerPage">
+    <div class="pagination">
+      <button 
+        class="btn btn-outline-primary page-btn"
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)">
+        &laquo;
+      </button>
+
+      <button 
+        *ngFor="let page of getPaginationRange()"
+        class="btn btn-outline-primary page-btn"
+        [class.active]="currentPage === page"
+        [class.ellipsis]="page === -1"
+        [disabled]="page === -1"
+        (click)="changePage(page)">
+        {{ page === -1 ? '...' : page }}
+      </button>
+
+      <button 
+        class="btn btn-outline-primary page-btn"
+        [disabled]="currentPage === getTotalPages()"
+        (click)="changePage(currentPage + 1)">
+        &raquo;
+      </button>
+    </div>
+    <div class="pagination-info">
+      Page {{ currentPage }} of {{ getTotalPages() }}
+    </div>
+  </div>
+</div>
+  

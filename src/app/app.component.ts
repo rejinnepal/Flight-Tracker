@@ -1,17 +1,22 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import {AirlineDetailsComponent} from './airline-details/airline-details.component';
-import { GoogleMapsModule } from '@angular/google-maps';
-import { RouterModule } from '@angular/router';
+import { NavComponent } from './nav/nav.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatIconModule, AirlineDetailsComponent, RouterModule, GoogleMapsModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [CommonModule, RouterOutlet, NavComponent],
+  template: `
+    <app-nav></app-nav>
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  `,
+  styles: [`
+    .content-wrapper {
+      padding-top: 60px;
+    }
+  `]
 })
-export class AppComponent {
-  title = 'flighttracker';
-}
+export class AppComponent {}

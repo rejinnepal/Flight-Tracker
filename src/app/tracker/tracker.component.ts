@@ -1,10 +1,11 @@
-
 import { Component, Input, OnInit, ViewChild, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FlightsService } from '../../backend/flights.service';
-import { GoogleMapsModule, MapInfoWindow, MapMarker} from '@angular/google-maps';
+import { GoogleMapsModule, MapInfoWindow, MapMarker, GoogleMap } from '@angular/google-maps';
 import { isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { RoutesService } from '../../backend/routes.service';
 
 @Component({
   selector: 'app-tracker',
@@ -24,49 +25,188 @@ export class TrackerComponent implements OnInit {
   selectedFlightInfo: any = null;
   searchedFlightNumber: string = "";
   isLoadingFinished: boolean = false;
+  isLoading: boolean = false;
+  routeDetails: any = null;
+  isLoadingRoute: boolean = false;
 
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   zoom = 3;
 
-  // planeIcon:string = "data:image/jpeg;base64,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"
-  // planeIcon:string = ""
-  planeIcon:string = "https://cdn-icons-png.flaticon.com/128/3778/3778489.png"
-  searchedFlightIcon: string = "https://png.pngtree.com/png-clipart/20230703/original/pngtree-cute-airplane-in-yellow-and-blue-colors-vector-png-image_9250523.png"; 
+  mapOptions: google.maps.MapOptions = {
+    styles: [
+      {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [
+          {
+            "color": "#193341"
+          }
+        ]
+      },
+      {
+        "featureType": "landscape",
+        "elementType": "geometry",
+        "stylers": [
+          {
+            "color": "#2c5a71"
+          }
+        ]
+      },
+      {
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [
+          {
+            "color": "#29768a"
+          },
+          {
+            "lightness": -37
+          }
+        ]
+      },
+      {
+        "featureType": "poi",
+        "elementType": "geometry",
+        "stylers": [
+          {
+            "color": "#406d80"
+          }
+        ]
+      },
+      {
+        "featureType": "transit",
+        "elementType": "geometry",
+        "stylers": [
+          {
+            "color": "#406d80"
+          }
+        ]
+      },
+      {
+        "elementType": "labels.text.stroke",
+        "stylers": [
+          {
+            "visibility": "on"
+          },
+          {
+            "color": "#3e606f"
+          },
+          {
+            "weight": 2
+          },
+          {
+            "gamma": 0.84
+          }
+        ]
+      },
+      {
+        "elementType": "labels.text.fill",
+        "stylers": [
+          {
+            "color": "#ffffff"
+          }
+        ]
+      }
+    ],
+    streetViewControl: false,
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+      style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+      position: google.maps.ControlPosition.TOP_RIGHT,
+      mapTypeIds: ['roadmap', 'satellite', 'terrain', 'hybrid']
+    },
+    fullscreenControl: true,
+    fullscreenControlOptions: {
+      position: google.maps.ControlPosition.RIGHT_TOP
+    },
+    zoomControl: true,
+    zoomControlOptions: {
+      position: google.maps.ControlPosition.RIGHT_CENTER
+    },
+    gestureHandling: 'greedy',  // Allows one-finger zoom on mobile
+    minZoom: 2,  // Prevent zooming out too far
+    maxZoom: 12, // Prevent zooming in too far
+    restriction: {
+      latLngBounds: {
+        north: 85,
+        south: -85,
+        west: -180,
+        east: 180
+      },
+      strictBounds: true
+    }
+  };
 
+  @ViewChild(GoogleMap) map!: GoogleMap;
+  @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow;
 
-  markerOptions: google.maps.MarkerOptions = { draggable: false };
+  // Add airport coordinates cache
+  private airportCoordinates: { [key: string]: { lat: number, lng: number } } = {
+    'JFK': { lat: 40.6413, lng: -73.7781 },
+    'LAX': { lat: 33.9416, lng: -118.4085 },
+    'LHR': { lat: 51.4700, lng: -0.4543 },
+    'DXB': { lat: 25.2532, lng: 55.3657 },
+    'CDG': { lat: 49.0097, lng: 2.5479 },
+    'SIN': { lat: 1.3644, lng: 103.9915 },
+    'HKG': { lat: 22.3080, lng: 113.9185 },
+    'AMS': { lat: 52.3086, lng: 4.7639 },
+    'FRA': { lat: 50.0379, lng: 8.5622 },
+    'ICN': { lat: 37.4602, lng: 126.4407 }
+    // Add more airports as needed
+  };
 
-  @ViewChild(MapInfoWindow, { static: false }) infoWindow!: MapInfoWindow;
-
-  constructor(private flightsService: FlightsService, @Inject(PLATFORM_ID) private platformId: object
+  constructor(
+    private flightsService: FlightsService,
+    private routesService: RoutesService,
+    @Inject(PLATFORM_ID) private platformId: object,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.loadLiveFlights();
+    
+    // Check for flight parameter in URL
+    this.route.queryParams.subscribe(params => {
+      if (params['flight']) {
+        // Wait for flights to load then search for the specified flight
+        setTimeout(() => {
+          this.searchedFlightNumber = params['flight'];
+          this.searchFlightNumber();
+        }, 1000); // Give time for flights to load
+      }
+    });
   }
 
   loadLiveFlights(): void {
     this.isLoadingFinished = false;
     this.flightsService.getFlights().subscribe(
       (data: any[]) => {
-        
-        console.log('Full flight data from API:', data);
         this.flights = data;
-
         this.displayMapWithPlanes = true;
   
         if (this.flights.length > 0) {
           this.center = { lat: this.flights[0].geography.latitude, lng: this.flights[0].geography.longitude };
   
-          this.markers = this.flights.map(flight => ({
-            position: { lat: flight.geography.latitude, lng: flight.geography.longitude },
-            title: flight.flight.iataNumber || flight.flight.number,
-            icon: {
-              url: this.planeIcon,
-              scaledSize: new google.maps.Size(15, 15)
-            },
-            flightData: flight
-          }));
+          this.markers = this.flights.map(flight => {
+            const rotation = flight.geography.direction || Math.floor(Math.random() * 360);
+            return {
+              position: { lat: flight.geography.latitude, lng: flight.geography.longitude },
+              title: flight.flight.iataNumber || flight.flight.number,
+              icon: {
+                path: 'M362.985,430.724l-10.248,51.234l62.332,57.969l-3.293,26.145 l-71.345-23.599l-2.001,13.069l-2.057-13.529l-71.278,22.928l-5.762-23.984l64.097-59.271l-8.913-51.359l0.858-114.43 l-21.945-11.338l-189.358,88.76l-1.18-32.262l213.344-180.08l0.875-107.436l7.973-32.005l7.642-12.054l7.377-3.958l9.238,3.65 l6.367,14.925l7.369,30.363v106.375l211.592,182.082l-1.496,32.247l-188.479-90.61l-21.616,10.087l-0.094,115.684',
+                scale: 0.05,
+                fillColor: flight.flight?.iataNumber?.toLowerCase() === this.searchedFlightNumber.toLowerCase() ? 
+                  '#FF4081' : '#1e88e5',  // Pink for searched flight, blue for others
+                fillOpacity: 1,
+                strokeColor: flight.flight?.iataNumber?.toLowerCase() === this.searchedFlightNumber.toLowerCase() ? 
+                  '#FF4081' : '#1e88e5',
+                strokeWeight: 1,
+                rotation: rotation - 45, // Adjust rotation to match the plane icon
+                anchor: new google.maps.Point(200, 200)
+              },
+              flightData: flight
+            };
+          });
         }
         this.isLoadingFinished = true;
       },
@@ -78,34 +218,127 @@ export class TrackerComponent implements OnInit {
     );
   }
   
-
-  onMarkerClick(marker: any, markerRef: MapMarker): void {
-    console.log('Marker reference:', markerRef);
-
-    const flight = marker.flightData;
   
-    if (!flight) {
-      console.error('Flight data is missing for the selected marker.');
+  
+
+  onMarkerClick(marker: any): void {
+    if (!marker || !marker.flightData) {
+      console.error('Invalid marker or missing flight data');
       return;
     }
-  
-    this.selectedFlightInfo = {
-      flightNumber: flight.flight.iataNumber || flight.flight.number || "Unknown",
-      airline: flight.airline.iataCode || "Unknown",
-      departureAirport: flight.departure.iataCode || 'Unknown',
-      arrivalAirport: flight.arrival.iataCode || 'Unknown',
-      speed: flight.speed.horizontal ? (flight.speed.horizontal * 3.6).toFixed(2) : 'N/A',
-      altitude: flight.geography.altitude || 'N/A',
-      lastUpdate: new Date(flight.system.updated * 1000).toLocaleString()
-    };
-  
-    if (this.infoWindow) {
-      this.infoWindow.open(markerRef);
+
+    this.selectedFlightInfo = marker.flightData;
+    this.loadFlightRoute(marker.flightData);
+
+    // Get departure and arrival coordinates
+    const depCode = marker.flightData.departure?.iataCode;
+    const arrCode = marker.flightData.arrival?.iataCode;
+
+    const departureCoords = this.airportCoordinates[depCode];
+    const arrivalCoords = this.airportCoordinates[arrCode];
+    const currentPosition = marker.position;
+
+    console.log('Creating flight path with coordinates:', {
+      departure: departureCoords,
+      current: currentPosition,
+      arrival: arrivalCoords
+    });
+
+    if (departureCoords && arrivalCoords && currentPosition) {
+      // Create the flight path
+      const flightPath = [
+        { lat: departureCoords.lat, lng: departureCoords.lng },
+        { lat: currentPosition.lat, lng: currentPosition.lng },
+        { lat: arrivalCoords.lat, lng: arrivalCoords.lng }
+      ];
+
+      // Update the polylines array
+      this.polylines = [{
+        path: flightPath,
+        options: {
+          strokeColor: '#FF4081',
+          strokeOpacity: 0.8,
+          strokeWeight: 3,
+          geodesic: true,
+          icons: [{
+            icon: {
+              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+              scale: 3,
+              fillColor: '#FF4081',
+              fillOpacity: 1,
+              strokeWeight: 1
+            },
+            offset: '50%',
+            repeat: '100px'
+          }]
+        }
+      }];
+
+      console.log('Created polylines:', this.polylines);
     } else {
-      console.error('InfoWindow reference is missing.');
+      console.log('Missing coordinates for flight path:', {
+        depCode,
+        arrCode,
+        departureCoords,
+        arrivalCoords,
+        currentPosition
+      });
+      this.polylines = [];
+    }
+
+    // Create a MapAnchorPoint object that implements the required interface
+    const anchorPoint = {
+      lat: marker.position.lat,
+      lng: marker.position.lng,
+      getAnchor: () => new google.maps.MVCObject(),
+      getPosition: () => new google.maps.LatLng(marker.position.lat, marker.position.lng)
+    };
+
+    // Set the info window options and open it
+    if (this.infoWindow) {
+      this.infoWindow.options = {
+        pixelOffset: new google.maps.Size(0, -30),
+        maxWidth: 300
+      };
+      this.infoWindow.position = new google.maps.LatLng(marker.position.lat, marker.position.lng);
+      this.infoWindow.open(anchorPoint);
+    }
+
+    // Smoothly pan to the marker
+    if (this.map?.googleMap) {
+      this.map.googleMap.panTo(marker.position);
     }
   }
-  
+
+  // Add method to clear polylines when clicking on map
+  onMapClick(): void {
+    if (this.infoWindow) {
+      this.infoWindow.close();
+    }
+    this.polylines = [];  // Clear polylines
+    this.selectedFlightInfo = null;
+  }
+
+  // Add method to handle marker hover
+  onMarkerHover(marker: any): void {
+    if (marker?.icon) {
+      const hoveredIcon = { ...marker.icon };
+      hoveredIcon.scale = 0.07; // Slightly larger
+      hoveredIcon.fillOpacity = 0.8;
+      marker.setIcon(hoveredIcon);
+    }
+  }
+
+  // Add method to handle marker mouse out
+  onMarkerMouseOut(marker: any): void {
+    if (marker?.icon) {
+      const normalIcon = { ...marker.icon };
+      normalIcon.scale = 0.05; // Back to normal size
+      normalIcon.fillOpacity = 1;
+      marker.setIcon(normalIcon);
+    }
+  }
+
   openInfoWindow(marker: any, flightData: any): void {
     this.selectedFlightInfo = {
       flightNumber: flightData.flight.iataNumber,
@@ -125,58 +358,112 @@ export class TrackerComponent implements OnInit {
   }
 
   searchFlightNumber(): void {
+    if (!this.searchedFlightNumber) {
+      this.errorMessage = 'Please enter a flight number';
+      return;
+    }
+
     const searchValue = this.searchedFlightNumber.toLowerCase();
   
-    const flight = this.flights.find(f => 
-      f.flight.iataNumber.toLowerCase() === searchValue || 
-      f.flight.number.toLowerCase() === searchValue
-    );
-  
-    if (flight) {
-      this.center = { 
-        lat: flight.geography.latitude, 
-        lng: flight.geography.longitude 
-      };
-  
-      this.zoom = 6;
-  
-      this.markers = this.flights.map(f => ({
-        position: { lat: f.geography.latitude, lng: f.geography.longitude },
-        title: f.flight.iataNumber || f.flight.number,
-        icon: {
-          url: f.flight.iataNumber.toLowerCase() === searchValue || f.flight.number.toLowerCase() === searchValue
-            ? this.searchedFlightIcon
-            : this.planeIcon,
-          scaledSize: new google.maps.Size(30, 30)
-        },
-        flightData: f
-      }));
-  
-      const markerForFlight = this.markers.find(m =>
-        m.flightData.flight.iataNumber.toLowerCase() === searchValue ||
-        m.flightData.flight.number.toLowerCase() === searchValue
-      );
-  
-      if (markerForFlight) {
-        setTimeout(() => {
-          const markerIndex = this.markers.indexOf(markerForFlight);
-          const markerRef = markerForFlight;
-          if (markerRef) {
-            this.onMarkerClick(markerForFlight, markerRef);
+    // First try to find in current flights
+    let flight = this.flights.find(f => {
+      const iataNumber = f.flight?.iataNumber?.toLowerCase() || '';
+      const flightNumber = f.flight?.number?.toLowerCase() || '';
+      return iataNumber === searchValue || flightNumber === searchValue;
+    });
+
+    if (!flight) {
+      // If not found in current flights, search specifically for this flight
+      this.isLoading = true;
+      this.flightsService.searchSpecificFlight(searchValue).subscribe({
+        next: (data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            flight = data[0];
+            this.flights = [...this.flights, ...data];  // Add new flights to existing ones
+            this.updateMapForFlight(flight);
           } else {
-            console.error('Marker reference is missing.');
+            this.errorMessage = `Flight ${this.searchedFlightNumber} not found. Please enter the complete flight number (e.g., AA1960)`;
+            setTimeout(() => this.errorMessage = '', 5000);
           }
-        }, 500);
-      }
-  
-      this.errorMessage = '';
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error searching flight:', error);
+          this.errorMessage = 'Failed to search for flight. Please try again.';
+          this.isLoading = false;
+        }
+      });
     } else {
-      this.errorMessage = `Flight number ${this.searchedFlightNumber} not found.`;
-  
-      setTimeout(() => {
-        this.errorMessage = '';
-      }, 5000);
+      this.updateMapForFlight(flight);
     }
+  }
+
+  // Helper method to update map for a found flight
+  private updateMapForFlight(flight: any): void {
+    this.center = { 
+      lat: flight.geography.latitude, 
+      lng: flight.geography.longitude 
+    };
+
+    this.zoom = 6;
+
+    this.markers = this.flights.map(f => ({
+      position: { lat: f.geography.latitude, lng: f.geography.longitude },
+      title: f.flight.iataNumber || f.flight.number,
+      icon: {
+        path: 'M362.985,430.724l-10.248,51.234l62.332,57.969l-3.293,26.145 l-71.345-23.599l-2.001,13.069l-2.057-13.529l-71.278,22.928l-5.762-23.984l64.097-59.271l-8.913-51.359l0.858-114.43 l-21.945-11.338l-189.358,88.76l-1.18-32.262l213.344-180.08l0.875-107.436l7.973-32.005l7.642-12.054l7.377-3.958l9.238,3.65 l6.367,14.925l7.369,30.363v106.375l211.592,182.082l-1.496,32.247l-188.479-90.61l-21.616,10.087l-0.094,115.684',
+        scale: 0.05,
+        fillColor: (f.flight.iataNumber?.toLowerCase() === this.searchedFlightNumber.toLowerCase() || 
+                   f.flight.number?.toLowerCase() === this.searchedFlightNumber.toLowerCase()) ? 
+          '#FF4081' : '#1e88e5',  // Pink for searched flight, blue for others
+        fillOpacity: 1,
+        strokeColor: (f.flight.iataNumber?.toLowerCase() === this.searchedFlightNumber.toLowerCase() || 
+                     f.flight.number?.toLowerCase() === this.searchedFlightNumber.toLowerCase()) ? 
+          '#FF4081' : '#1e88e5',
+        strokeWeight: 1,
+        rotation: f.geography.direction - 45 || 0, // Adjust rotation to match the plane icon
+        anchor: new google.maps.Point(200, 200)
+      },
+      flightData: f
+    }));
+
+    const markerForFlight = this.markers.find(m =>
+      m.flightData.flight.iataNumber?.toLowerCase() === this.searchedFlightNumber.toLowerCase() ||
+      m.flightData.flight.number?.toLowerCase() === this.searchedFlightNumber.toLowerCase()
+    );
+
+    if (markerForFlight) {
+      setTimeout(() => {
+        this.onMarkerClick(markerForFlight);
+      }, 500);
+    }
+
+    this.errorMessage = '';
+  }
+
+  loadFlightRoute(flightData: any): void {
+    this.isLoadingRoute = true;
+    this.routeDetails = null;
+
+    this.routesService.getFlightRoute(flightData).subscribe({
+      next: (routeData) => {
+        if (Array.isArray(routeData) && routeData.length > 0) {
+          this.routeDetails = routeData[0];
+          // Update the info window to show the new data
+          if (this.infoWindow) {
+            this.infoWindow.options = {
+              pixelOffset: new google.maps.Size(0, -30),
+              maxWidth: 400 // Increased to accommodate more information
+            };
+          }
+        }
+        this.isLoadingRoute = false;
+      },
+      error: (error) => {
+        console.error('Error loading route:', error);
+        this.isLoadingRoute = false;
+      }
+    });
   }
 }
 

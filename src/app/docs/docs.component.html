@@ -1,1 +1,72 @@
-<p>Use this documentations page to use this service effectively.</p>
+<div class="docs-container">
+  <div class="header-section">
+    <h1>Documentation</h1>
+    <p class="subtitle">Everything you need to know about SkyTracker</p>
+  </div>
+
+  <div class="container">
+    <!-- Quick Links -->
+    <div class="quick-links">
+      <h2>Quick Access</h2>
+      <div class="links-grid">
+        <a routerLink="/tracker" class="quick-link-card">
+          <span class="material-symbols-outlined">flight</span>
+          <h3>Flight Tracker</h3>
+          <p>Track flights in real-time</p>
+        </a>
+        <a routerLink="/airports" class="quick-link-card">
+          <span class="material-symbols-outlined">local_airport</span>
+          <h3>Airports</h3>
+          <p>Browse airport directory</p>
+        </a>
+        <a routerLink="/airlines" class="quick-link-card">
+          <span class="material-symbols-outlined">airlines</span>
+          <h3>Airlines</h3>
+          <p>View airline information</p>
+        </a>
+        <a routerLink="/flights" class="quick-link-card">
+          <span class="material-symbols-outlined">schedule</span>
+          <h3>Flight Schedule</h3>
+          <p>Check flight timetables</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Documentation Sections -->
+    <div class="docs-sections">
+      <div *ngFor="let section of sections" class="docs-section">
+        <div class="section-header">
+          <span class="material-symbols-outlined section-icon">{{ section.icon }}</span>
+          <h2>{{ section.title }}</h2>
+        </div>
+        
+        <div class="content-grid">
+          <div *ngFor="let item of section.content" class="content-card">
+            <h3>{{ item.title }}</h3>
+            <p class="description">{{ item.description }}</p>
+            
+            <div *ngIf="item.steps" class="steps-list">
+              <h4>
+                <span class="material-symbols-outlined">format_list_numbered</span>
+                Steps
+              </h4>
+              <ol>
+                <li *ngFor="let step of item.steps">{{ step }}</li>
+              </ol>
+            </div>
+
+            <div *ngIf="item.features" class="features-list">
+              <h4>
+                <span class="material-symbols-outlined">featured_play_list</span>
+                Features
+              </h4>
+              <ul>
+                <li *ngFor="let feature of item.features">{{ feature }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

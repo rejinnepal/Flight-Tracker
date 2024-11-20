@@ -1,45 +1,67 @@
-<!-- <button type="button" class="btn btn-primary">Test Button</button>Step 7: Serve Your ApplicationRun your Angular application using the Angular CLI:
-<div class="text-center">
-  <h1>haha</h1>
-  <p>contras</p>
-  <button class="btn btn-primary">bootstrap-button</button>
-</div>
-<mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="home"></mat-icon>
-<span class="material-symbols-outlined">
-  delete_forever
-  </span>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
-      <span class="material-symbols-outlined">refresh</span>&nbsp; Retake quiz
-
-<app-airline-details></app-airline-details> -->
-
-<nav class="navbar navbar-expand-lg bg-dark" id="nav-bar">
+<nav class="navbar navbar-expand-lg fixed-top" *ngIf="authService.isAuthenticated()">
   <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/home">FlightTracker</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <span class="material-symbols-outlined brand-icon me-2">flight_takeoff</span>
+      <span class="brand-text">SkyTracker</span>
+    </a>
+    
+    <!-- Mobile Toggle Button -->
+    <button 
+      class="navbar-toggler border-0 shadow-none" 
+      type="button" 
+      data-bs-toggle="collapse" 
+      data-bs-target="#navbarContent" 
+      aria-controls="navbarContent" 
+      aria-expanded="false" 
+      aria-label="Toggle navigation">
+      <span class="material-symbols-outlined">menu</span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+    <!-- Navigation Items -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/tracker">Tracker</a>
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <span class="material-symbols-outlined nav-icon">home</span>
+            <span class="nav-text">Home</span>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/live-flights">Flights</a>
+          <a class="nav-link" routerLink="/tracker" routerLinkActive="active">
+            <span class="material-symbols-outlined nav-icon">flight</span>
+            <span class="nav-text">Flight Tracker</span>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/airlines" routerLinkActive="active">Airlines</a>
+          <a class="nav-link" routerLink="/airports" routerLinkActive="active">
+            <span class="material-symbols-outlined nav-icon">airport</span>
+            <span class="nav-text">Airports</span>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/airports">Airports</a>
+          <a class="nav-link" routerLink="/airlines" routerLinkActive="active">
+            <span class="material-symbols-outlined nav-icon">airlines</span>
+            <span class="nav-text">Airlines</span>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/docs">Docs</a>
+          <a class="nav-link" routerLink="/docs" routerLinkActive="active">
+            <span class="material-symbols-outlined nav-icon">description</span>
+            <span class="nav-text">Docs</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" (click)="authService.logout()">
+            <span class="material-symbols-outlined nav-icon">logout</span>
+            <span class="nav-text">Logout</span>
+          </button>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<router-outlet></router-outlet>
+<div class="content-wrapper" [class.no-nav]="!authService.isAuthenticated()">
+  <router-outlet></router-outlet>
+</div>

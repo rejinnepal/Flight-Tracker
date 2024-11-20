@@ -1,0 +1,45 @@
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="nav-container">
+    <!-- Logo and Brand -->
+    <a [routerLink]="['/']" class="brand" (click)="closeMobileMenu()">
+      <span class="material-symbols-outlined brand-icon">flight_takeoff</span>
+      <span class="brand-text">SkyTracker</span>
+    </a>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+      <span class="material-symbols-outlined">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
+    </button>
+
+    <!-- Navigation Links -->
+    <div class="nav-links" [class.active]="isMobileMenuOpen">
+      <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link" (click)="closeMobileMenu()">
+        <span class="material-symbols-outlined nav-icon">home</span>
+        <span class="nav-text">Home</span>
+      </a>
+      <a [routerLink]="['/flights']" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">
+        <span class="material-symbols-outlined nav-icon">schedule</span>
+        <span class="nav-text">Flights</span>
+      </a>
+      <a [routerLink]="['/tracker']" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">
+        <span class="material-symbols-outlined nav-icon">flight</span>
+        <span class="nav-text">Flight Tracker</span>
+      </a>
+      <a [routerLink]="['/airports']" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">
+        <span class="material-symbols-outlined nav-icon">local_airport</span>
+        <span class="nav-text">Airports</span>
+      </a>
+      <a [routerLink]="['/airlines']" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">
+        <span class="material-symbols-outlined nav-icon">airlines</span>
+        <span class="nav-text">Airlines</span>
+      </a>
+      <a [routerLink]="['/docs']" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">
+        <span class="material-symbols-outlined nav-icon">description</span>
+        <span class="nav-text">Docs</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" [class.active]="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+</nav> 

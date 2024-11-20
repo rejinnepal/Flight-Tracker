@@ -1,25 +1,163 @@
-<button type="button" class="btn btn-primary search-bar" (click)="loadFlights()">{{!displayFilterSearchBar ? "Search all live flights   " : "Refresh the search   "}}
-    <span class="material-symbols-outlined"> search </span>
-</button>
+<div class="container">
+  <div class="header-section">
+    <h1>Flight Tracker</h1>
+    <p class="subtitle">Track real-time flight status worldwide</p>
+  </div>
 
-<div class="input-group search-bar" *ngIf="displayFilterSearchBar">
-    <input type="search" class="form-control rounded" placeholder="Enter the flight number to view flight details" aria-label="Search" aria-describedby="search-addon" [(ngModel)]="flightNumber" (ngModelChange)="filterFlights()"/>
-</div>
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
 
-<div class="row row-cols-1 row-cols-md-3 g-4 cards-container" *ngIf="flights.length > 0">
-    <div *ngFor="let flight of filteredFlights" class="col">
-      <div class="card" [ngClass]="{
-        'card-active': flight.flight_status === 'active',
-        'card-scheduled': flight.flight_status === 'scheduled',
-        'card-cancelled': flight.flight_status === 'cancelled'}">
-        <div class="card-body">
-          <h2 class="card-title">{{flight.flight.iata || "N/A"}}</h2>
-          <h4 class="card-text">{{flight.departure.iata}} - {{flight.arrival.iata}}</h4>
-          <p class="card-text">Airline: {{flight.airline.name || "N/A"}}</p>
-          <p class="card-text">Scheduled Departure: {{flight.departure.scheduled.slice(11,16)}} ({{flight?.departure?.timezone?.split("/").pop() || "N/A"}})</p>
-          <p class="card-text">Scheduled Arrival: {{flight.arrival.scheduled.slice(11,16)}} ({{flight?.arrival?.timezone?.split("/").pop() || "N/A"}})</p>
-          <p class="card-text">Flight Status: {{ flight.flight_status ? (flight.flight_status.charAt(0).toUpperCase() + flight.flight_status.slice(1).toLowerCase()) : 'N/A' }}</p>
+  <div class="search-section" [class.loading]="isLoading">
+    <div class="route-search mb-3">
+      <div class="input-group">
+        <span class="input-group-text bg-white">
+          <span class="material-symbols-outlined">flight_takeoff</span>
+        </span>
+        <input 
+          type="search" 
+          class="form-control search-input" 
+          placeholder="From (Airport IATA code)" 
+          [(ngModel)]="fromAirport"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="input-group">
+        <span class="input-group-text bg-white">
+          <span class="material-symbols-outlined">flight_land</span>
+        </span>
+        <input 
+          type="search" 
+          class="form-control search-input" 
+          placeholder="To (Airport IATA code)" 
+          [(ngModel)]="toAirport"
+          [disabled]="isLoading"
+        />
+        <button 
+          class="btn btn-primary search-btn" 
+          (click)="searchByRoute()"
+          [disabled]="isLoading || !fromAirport || !toAirport">
+          Search Route
+        </button>
+      </div>
+    </div>
+
+    <div class="general-search">
+      <div class="input-group">
+        <span class="input-group-text bg-white">
+          <span class="material-symbols-outlined">search</span>
+        </span>
+        <input 
+          type="search" 
+          class="form-control search-input" 
+          placeholder="Search by flight number, airline, or airport code" 
+          [(ngModel)]="searchCode"
+          (ngModelChange)="searchFlights()"
+          [disabled]="isLoading"
+        />
+        <button 
+          class="btn btn-outline-secondary refresh-btn" 
+          (click)="loadFlights()"
+          [disabled]="isLoading"
+          title="Refresh flight data">
+          <span class="material-symbols-outlined">refresh</span>
+        </button>
+      </div>
+    </div>
+    
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner-border text-primary spinner-sm" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-info" *ngIf="flights.length > 0">
+    Showing {{ filteredFlights.length }} flights
+  </div>
+
+  <div class="flights-list" *ngIf="flights.length > 0">
+    <div class="card" *ngFor="let flight of paginateFlights()">
+      <div class="card-body">
+        <div class="flight-header">
+          <h5 class="card-title">
+            <span class="material-symbols-outlined">flight</span>
+            {{ flight.flight?.number || 'N/A' }}
+          </h5>
+          <span class="badge" [ngClass]="getStatusClass(flight.status)">
+            {{ flight.status ? (flight.status | titlecase) : 'Scheduled' }}
+          </span>
+        </div>
+
+        <div class="flight-route">
+          <div class="departure">
+            <span class="airport-code">{{ flight.departure?.iataCode || 'N/A' }}</span>
+            <span class="time">{{ formatTime(flight.departure?.scheduledTime) }}</span>
+            <span class="timezone">{{ flight.departure?.terminal || 'N/A' }}</span>
+          </div>
+          <div class="route-line">
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </div>
+          <div class="arrival">
+            <span class="airport-code">{{ flight.arrival?.iataCode || 'N/A' }}</span>
+            <span class="time">{{ formatTime(flight.arrival?.scheduledTime) }}</span>
+            <span class="timezone">{{ flight.arrival?.terminal || 'N/A' }}</span>
+          </div>
+        </div>
+
+        <div class="airline-info">
+          <span class="material-symbols-outlined">airlines</span>
+          <div>
+            <span>{{ flight.airline?.name || 'Unknown Airline' }}</span>
+            <small class="d-block text-muted">
+              Flight {{ flight.flight?.number || 'N/A' }}
+            </small>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button 
+            class="btn btn-outline-primary track-btn" 
+            (click)="trackFlight(flight)"
+            [disabled]="!flight.flight?.number">
+            <span class="material-symbols-outlined">location_on</span>
+            Show in Map
+          </button>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="filteredFlights.length > itemsPerPage">
+    <div class="pagination">
+      <button 
+        class="btn btn-outline-primary page-btn"
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)">
+        &laquo;
+      </button>
+
+      <button 
+        *ngFor="let page of getPaginationRange()"
+        class="btn btn-outline-primary page-btn"
+        [class.active]="currentPage === page"
+        [class.ellipsis]="page === -1"
+        [disabled]="page === -1"
+        (click)="changePage(page)">
+        {{ page === -1 ? '...' : page }}
+      </button>
+
+      <button 
+        class="btn btn-outline-primary page-btn"
+        [disabled]="currentPage === getTotalPages()"
+        (click)="changePage(currentPage + 1)">
+        &raquo;
+      </button>
+    </div>
+    <div class="pagination-info">
+      Page {{ currentPage }} of {{ getTotalPages() }}
+    </div>
+  </div>
 </div>

@@ -1,1 +1,66 @@
-<p>Welcome to the FlightTracker, where you can track your flight!</p>
+<div class="hero-section">
+  <div class="hero-content">
+    <h1>Welcome to SkyTracker</h1>
+    <p class="subtitle">Your Real-Time Flight Tracking Solution</p>
+    <div class="hero-buttons">
+      <a routerLink="/tracker" class="btn btn-primary btn-lg">
+        <span class="material-symbols-outlined">flight</span>
+        Track Flights
+      </a>
+      <a routerLink="/airports" class="btn btn-outline-light btn-lg">
+        <span class="material-symbols-outlined">local_airport</span>
+        Explore Airports
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2>Features</h2>
+    <div class="features-grid">
+      <div class="feature-card" *ngFor="let feature of features" [routerLink]="feature.route">
+        <div class="feature-icon">
+          <span class="material-symbols-outlined">{{ feature.icon }}</span>
+        </div>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">250K+</div>
+        <div class="stat-label">Daily Flights</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5000+</div>
+        <div class="stat-label">Airports</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">1000+</div>
+        <div class="stat-label">Airlines</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">200+</div>
+        <div class="stat-label">Countries</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Start Tracking Flights Now</h2>
+      <p>Get real-time updates on any flight worldwide</p>
+      <a routerLink="/tracker" class="btn btn-primary btn-lg">
+        <span class="material-symbols-outlined">flight_takeoff</span>
+        Launch Tracker
+      </a>
+    </div>
+  </section>
+</div>

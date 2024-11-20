@@ -1,3 +1,125 @@
-#nav-bar .nav-link, #nav-bar .navbar-brand{
-    color:white;
+/* Navbar Base Styles */
+.navbar {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 0.75rem 1rem;
+  min-height: 70px;
+}
+
+/* Brand Styles */
+.navbar-brand {
+  color: #1e3c72;
+  font-weight: 600;
+  font-size: 1.4rem;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.navbar-brand:hover {
+  transform: translateY(-1px);
+  color: #1e3c72;
+}
+
+.brand-icon {
+  font-size: 1.8rem;
+  color: #1e3c72;
+}
+
+/* Navigation Items */
+.navbar-nav {
+  gap: 0.5rem;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4a5568;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  background: rgba(30, 60, 114, 0.08);
+  color: #1e3c72;
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  background: #1e3c72;
+  color: white;
+}
+
+.nav-link.active:hover {
+  background: #2a5298;
+  transform: translateY(-1px);
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+}
+
+/* Mobile Menu Button */
+.navbar-toggler {
+  padding: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.navbar-toggler:hover {
+  transform: scale(1.1);
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-toggler .material-symbols-outlined {
+  color: #1e3c72;
+  font-size: 1.8rem;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  padding-top: 70px;
+  min-height: calc(100vh - 70px);
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    background: white;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .navbar-nav {
+    gap: 0.3rem;
+  }
+
+  .nav-link {
+    padding: 0.8rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .brand-icon {
+    font-size: 1.6rem;
+  }
+
+  .nav-text {
+    font-size: 0.95rem;
+  }
 }

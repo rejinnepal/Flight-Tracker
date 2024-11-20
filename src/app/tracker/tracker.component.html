@@ -1,54 +1,107 @@
-<div class="map-container">
-  <div *ngIf="!isLoadingFinished" class="loading-bar-container">
-    <div class="loading-bar"></div>
-    <p>Loading map and flight data...</p>
-  </div>
-  <div *ngIf="isLoadingFinished">
-    <div class="alert alert-danger top-alert" *ngIf="errorMessage">
-      {{ errorMessage }}
+<div class="tracker-container">
+  <div class="content-wrapper">
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1>Live Flight Tracker</h1>
+      <p class="subtitle">Track flights in real-time across the globe</p>
     </div>
-    <div class="input-group search-bar">
-      <input
-        type="search"
-        class="form-control rounded"
-        placeholder="Enter the flight number to track the plane"
-        aria-label="Search"
-        aria-describedby="search-addon"
-        [(ngModel)]="searchedFlightNumber"
-      />
-      <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init (click)="searchFlightNumber()">
-        <span class="material-symbols-outlined">search</span>
-      </button>
-    </div>
-  </div>
-  
-    <google-map
-    *ngIf="displayMapWithPlanes"
-    height="100%"
-    width="100%"
-    [center]="center"
-    [zoom]="zoom"
-  >
-    <map-marker
-      *ngFor="let marker of markers"
-      [position]="marker.position"
-      [icon]="marker.icon"
-      [title]="marker.title"
-      (mapClick)="onMarkerClick(marker, markerRef)"
-      #markerRef="mapMarker"
-    >
-    </map-marker>
-  
-    <map-info-window #infoWindow>
-      <div *ngIf="selectedFlightInfo">
-        <strong>Flight Number:</strong> {{ selectedFlightInfo.flightNumber }}<br />
-        <strong>Airline:</strong> {{ selectedFlightInfo.airline }}<br />
-        <strong>Departure Airport:</strong> {{ selectedFlightInfo.departureAirport }}<br />
-        <strong>Arrival Airport:</strong> {{ selectedFlightInfo.arrivalAirport }}<br />
-        <strong>Speed:</strong> {{ selectedFlightInfo.speed }} km/h<br />
-        <strong>Altitude:</strong> {{ selectedFlightInfo.altitude }} m<br />
-        <strong>Last Update:</strong> {{ selectedFlightInfo.lastUpdate }}<br />
+
+    <!-- Loading State -->
+    <div *ngIf="!isLoadingFinished" class="loading-container">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading flight data...</p>
       </div>
-    </map-info-window>
-  </google-map>
+    </div>
+
+    <!-- Search and Error Section -->
+    <div *ngIf="isLoadingFinished" class="search-section">
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      
+      <div class="search-container">
+        <div class="input-group">
+          <span class="input-group-text">
+            <span class="material-symbols-outlined">flight</span>
+          </span>
+          <input
+            type="search"
+            class="form-control"
+            placeholder="Enter flight number (e.g., AA123)"
+            [(ngModel)]="searchedFlightNumber"
+          />
+          <button class="btn btn-primary search-btn" (click)="searchFlightNumber()" [disabled]="isLoading">
+            <span class="material-symbols-outlined">travel_explore</span>
+            <span class="btn-text">Track Flight</span>
+            <div class="spinner-border spinner-border-sm" role="status" *ngIf="isLoading">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Section -->
+    <div class="map-container" *ngIf="displayMapWithPlanes">
+      <google-map
+        #googleMap
+        height="70vh"
+        width="100%"
+        [center]="center"
+        [zoom]="zoom"
+        [options]="mapOptions"
+        (mapClick)="onMapClick()">
+        
+        <map-marker
+          *ngFor="let marker of markers"
+          [position]="marker.position"
+          [title]="marker.title"
+          [icon]="marker.icon"
+          (mapClick)="onMarkerClick(marker)"
+          (mouseOver)="onMarkerHover(marker)"
+          (mouseOut)="onMarkerMouseOut(marker)">
+        </map-marker>
+
+        <map-polyline
+          *ngFor="let polyline of polylines"
+          [path]="polyline.path"
+          [options]="polyline.options">
+        </map-polyline>
+
+        <map-info-window>
+          <div class="info-window-content" *ngIf="selectedFlightInfo">
+            <h3 class="info-title">Flight Details</h3>
+            <div class="flight-info">
+              <p><strong>Flight Number:</strong> {{ selectedFlightInfo.flight?.iataNumber || selectedFlightInfo.flight?.number || 'N/A' }}</p>
+              <p><strong>Airline:</strong> {{ selectedFlightInfo.airline?.name || 'N/A' }}</p>
+              <p><strong>From:</strong> {{ selectedFlightInfo.departure?.iataCode || 'N/A' }}</p>
+              <p><strong>To:</strong> {{ selectedFlightInfo.arrival?.iataCode || 'N/A' }}</p>
+              <p><strong>Speed:</strong> {{ selectedFlightInfo.speed?.horizontal || 'N/A' }} km/h</p>
+              <p><strong>Altitude:</strong> {{ selectedFlightInfo.geography?.altitude || 'N/A' }} m</p>
+              <p><strong>Direction:</strong> {{ selectedFlightInfo.geography?.direction || 'N/A' }}°</p>
+              
+              <!-- Route Details Section -->
+              <div class="route-details" *ngIf="routeDetails || isLoadingRoute">
+                <hr>
+                <h4>Route Information</h4>
+                <div *ngIf="isLoadingRoute" class="text-center">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+                <div *ngIf="routeDetails">
+                  <p><strong>Schedule:</strong></p>
+                  <p>Departure: {{ routeDetails.departureTime || 'N/A' }}</p>
+                  <p>Arrival: {{ routeDetails.arrivalTime || 'N/A' }}</p>
+                  <p><strong>Frequency:</strong> {{ routeDetails.frequency || 'N/A' }}</p>
+                  <p><strong>Aircraft Type:</strong> {{ routeDetails.aircraftType || 'N/A' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </map-info-window>
+      </google-map>
+    </div>
+  </div>
 </div>

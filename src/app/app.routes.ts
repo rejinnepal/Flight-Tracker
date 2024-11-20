@@ -1,17 +1,29 @@
-import { Routes} from '@angular/router';
-import { AirlineDetailsComponent } from './airline-details/airline-details.component';
-import { TrackerComponent } from './tracker/tracker.component';
-import { HomeComponent } from './home/home.component';
-import { AirportDetailsComponent } from './airport-details/airport-details.component';
-import { DocsComponent } from './docs/docs.component';
-import { FlightDetailsComponent } from './flight-details/flight-details.component';
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { component: AirlineDetailsComponent, path: 'airlines' },
-  { component: TrackerComponent, path: 'tracker' },
-  { component: HomeComponent, path: 'home' },
-  { component: AirportDetailsComponent, path: 'airports' },
-  { component: DocsComponent, path: 'docs' },
-  { component: FlightDetailsComponent, path: 'live-flights' },
-  { path: '**', redirectTo: '/home' },
+  { 
+    path: '', 
+    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
+  },
+  {
+    path: 'tracker',
+    loadComponent: () => import('./tracker/tracker.component').then(m => m.TrackerComponent)
+  },
+  {
+    path: 'airports',
+    loadComponent: () => import('./airport-details/airport-details.component').then(m => m.AirportDetailsComponent)
+  },
+  {
+    path: 'airlines',
+    loadComponent: () => import('./airline-details/airline-details.component').then(m => m.AirlineDetailsComponent)
+  },
+  {
+    path: 'flights',
+    loadComponent: () => import('./flight-details/flight-details.component').then(m => m.FlightDetailsComponent)
+  },
+  {
+    path: 'docs',
+    loadComponent: () => import('./docs/docs.component').then(m => m.DocsComponent)
+  },
+  { path: '**', redirectTo: '' }
 ];
